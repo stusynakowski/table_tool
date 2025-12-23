@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "table_tool"
+version = "0.1.0"
+description = "A tool to define custom operations on Google Sheets tables"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "gspread",
+    "google-auth",
+    "google-auth-oauthlib",
+    "google-auth-httplib2",
+    "python-dotenv",
+]
+
+[project.scripts]
+table-tool = "table_tool.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
