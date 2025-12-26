@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Table Tool Widget",
+  "version": "1.0",
+  "description": "Interface for Table Tool Python operations",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

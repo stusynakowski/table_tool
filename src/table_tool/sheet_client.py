@@ -1,5 +1,6 @@
 import gspread
 import os
+import google.auth
 from google.oauth2.service_account import Credentials
 
 # Define the scope
@@ -10,16 +11,30 @@ SCOPES = [
 
 def get_gspread_client(credentials_path='service_account.json'):
     """
-    Authenticates with Google Sheets using a service account JSON file.
+    Authenticates with Google Sheets.
+    Tries to use a service account JSON file first.
+    If not found, falls back to Application Default Credentials (ADC).
     """
-    if not os.path.exists(credentials_path):
-        raise FileNotFoundError(f"Credentials file not found at {credentials_path}. Please follow the README to set up credentials.")
+    # 1. Try Service Account
+    if os.path.exists(credentials_path):
+        credentials = Credentials.from_service_account_file(
+            credentials_path, scopes=SCOPES
+        )
+        return gspread.authorize(credentials)
     
-    credentials = Credentials.from_service_account_file(
-        credentials_path, scopes=SCOPES
+    # 2. Try Application Default Credentials (ADC)
+    try:
+        credentials, project = google.auth.default(scopes=SCOPES)
+        return gspread.authorize(credentials)
+    except Exception as e:
+        print(f"ADC Authentication failed: {e}")
+
+    # 3. Fail
+    raise FileNotFoundError(
+        f"No credentials found. Please either:\n"
+        f"1. Place 'service_account.json' in the project root.\n"
+        f"2. Run 'gcloud auth application-default login' to use your personal account."
     )
-    client = gspread.authorize(credentials)
-    return client
 
 def open_worksheet(sheet_name, worksheet_name=None):
     """
